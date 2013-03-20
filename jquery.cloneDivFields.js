@@ -29,7 +29,15 @@
         }
 
         function clearCloneValues(element){
-            if (element.attr('value') !== undefined){
+            // Let's make sure it's not the outermost element being cloned.
+            // Otherwise, .parent() fails and the function dies.
+            var skip = false;
+            if (element.parent().length <= 0){
+                skip = true;
+            }
+            if (!skip && element.parent()[0].nodeName.toLowerCase() == "select"){
+                element.parent().children().first().attr('selected','selected');
+            } else if (element.attr('value') !== undefined){
                 element.val('');                
             }
         }
@@ -73,6 +81,7 @@
                     for (var i = flds.length - 1; i >= 0; i--) {
                     //    $(flds[i]).attr('required','required');
                     };
+                    outerParentDiv.children('span.error').html('If there are any fields in this group that are not blank, all fields are required.');
                 });
             } else {
                 labels.each(function(){
@@ -80,6 +89,7 @@
                     for (var i = flds.length - 1; i >= 0; i--) {
                     //   $(flds[i]).removeAttr('required');
                     };
+                    outerParentDiv.children('span.error').html('');
                 });
             }    
         }
@@ -125,7 +135,6 @@
                 markAllRequired($(this));
             });
         }
-
 
     }
 })(jQuery);
